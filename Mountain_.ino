@@ -37,49 +37,67 @@
  * http://www.arduino.cc/en/Tutorial/Blink
  */
 
+
 #include <MeggyJrSimple.h>    // Required code, line 1 of 2.
 
 void setup()                    // run once, when the sketch starts
 {
   MeggyJrSimpleSetup();      // Required code, line 2 of 2.
 }
-int xsharka = 2;
-int ysharka = 2;
-boolean aAShark = false;
-boolean bBShark = false;
+int x = 3;
+int y = 0;
+
+int a = 2;
+int b = 0;
+
+int c = 1;
+int d = 0;
+boolean aA = false;
+boolean bB = false;
+boolean goRight = true;
+int row[8] = {0,0,0,1,1,0,0,0};
 
 
-void aShark()
-{
-  DrawPx(xsharka, ysharka, Red);
-  if (xsharka == 2)
-  {
-    if (ysharka == 2)
-    {
-      aAShark = false;
-    }
-  }
-  if (aAShark == false)
-  {
-    xsharka = xsharka + 1;
-  }
-  if (xsharka == 6)
-  {
-    if (ysharka == 2)
-    {
-      aAShark = true;
-    }
-  }
-  if (aAShark == true)
-  {
-    xsharka = xsharka - 1;
-  }
-}
 
 void loop()                     
 {
-  aShark();
+  DrawRow();
+  UpdateRow();
+  //Row1();
   DisplaySlate();
-    delay(400);
+    delay(200);
     ClearSlate();
+}
+
+void DrawRow()
+{
+  for (int i = 0; i < 8; i++)
+  {
+    DrawPx(i,0,row[i]);
+  }
+}
+
+void UpdateRow()
+{
+  if (goRight)
+  {
+    for (int i = 7; i > 0; i--)
+    {
+      if (row[7] != 1)
+        row[i] = row[i-1];
+      else goRight = false;
+    }
+  }
+  else
+  {
+    for (int i = 0; i < 7; i++)
+    {
+      if (row[0] != 1)
+      {
+        row[i] = row[i+1];
+        row[i+1] = 0;
+      }
+      else goRight = true;
+    }
+  }
 }

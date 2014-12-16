@@ -43,19 +43,16 @@
 void setup()                    // run once, when the sketch starts
 {
   MeggyJrSimpleSetup();      // Required code, line 2 of 2.
+  Serial.begin(9600);
 }
 int x = 3;
 int y = 0;
 
-int a = 2;
-int b = 0;
 
-int c = 1;
-int d = 0;
 boolean aA = false;
 boolean bB = false;
 boolean goRight = true;
-int row[8] = {0,0,0,1,1,0,0,0};
+int row[8] = {0,1,1,1,0,0,0,0};
 
 
 
@@ -65,7 +62,7 @@ void loop()
   UpdateRow();
   //Row1();
   DisplaySlate();
-    delay(200);
+    delay(500);
     ClearSlate();
 }
 
@@ -84,8 +81,15 @@ void UpdateRow()
     for (int i = 7; i > 0; i--)
     {
       if (row[7] != 1)
+      {
         row[i] = row[i-1];
-      else goRight = false;
+        row[4] = 0;
+      }
+      else
+      {
+        goRight = false;
+        row[3] = 0;
+      }
     }
   }
   else
@@ -95,9 +99,27 @@ void UpdateRow()
       if (row[0] != 1)
       {
         row[i] = row[i+1];
-        row[i+1] = 0;
+        row[4] = 0;
       }
-      else goRight = true;
+      else
+      {
+        goRight = true;
+        // at edge
+        PrintArray();
+        row[3] = 0;
+      }
     }
   }
 }
+
+void PrintArray()
+{
+  for (int i = 0; i < 8; i++)
+  {
+    Serial.print("i is ");
+    Serial.println(i);
+    Serial.println(row[i]);
+    Serial.println();
+  }
+}
+

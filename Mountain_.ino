@@ -54,7 +54,9 @@ int level = 0;
 
 void setup()                    // run once, when the sketch starts
 {
-  MeggyJrSimpleSetup();      // Required code, line 2 of 2.
+  MeggyJrSimpleSetup(); 
+Serial.begin(9600);
+  // Required code, line 2 of 2.
 //  rows[0] = [random(6)+1]; //picks a random column in the array to be between 1-6
   InitRows(); // Just called once. It creates random directions for each row.
 }
@@ -131,14 +133,7 @@ void UpdateArray()
     }
   }
   
-  for (int i = 3; i < 8; i++) // Upper rows are two-dot segments
-  {
-    if (rows[i] > 0) // if there is something in the row
-    {
-      DrawPx(rows[i],i,1); // Reference dot
-      DrawPx(rows[i]+1,i,1); // Dot to right
-    }
-  }
+ 
 }
 
 void InitRows() // This basically fills the movingRight array with trues and falses
@@ -151,3 +146,15 @@ void InitRows() // This basically fills the movingRight array with trues and fal
       movingRight[i] = true; // otherwise value is true
   }
 }
+
+void PrintArray()
+{
+  for (int i = 0; i < 8; i++)
+  {
+    Serial.print("i is ");
+    Serial.println(i);
+    Serial.println(rows[i]);
+    Serial.println();
+  }
+}
+

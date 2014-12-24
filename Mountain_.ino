@@ -48,9 +48,11 @@
 
 #include <MeggyJrSimple.h>    // Required code, line 1 of 2.
 
-int rows[8] = {1,0,0,0,0,0,0,0}; // The numbers in this array correspond to the column where the reference point starts
+int rows[9] = {1,0,0,0,0,0,0,0,0}; // The numbers in this array correspond to the column where the reference point starts
 boolean movingRight[8]; // the values in this array provide the direction each of the rows is moving in.
 int level = 0;
+int win = 0;
+int loose = 0;
 
 void setup()                    // run once, when the sketch starts
 {
@@ -63,6 +65,10 @@ Serial.begin(9600);
 
 void loop()                     // run over and over again
 {
+DrawPx(0,6,White);
+ DrawPx(0,7,White);
+ DrawPx(7,6,White);
+ DrawPx(7,7,White);
   DrawArray();
   DisplaySlate();
   delay(100);
@@ -74,6 +80,17 @@ void loop()                     // run over and over again
     rows[level]++;  //have dots appear above
   }  
   UpdateArray();
+  
+  if (level > 7)
+  {
+   win = 1;
+  }
+  if (win > 0) 
+    {
+    winscreen();
+    NewGame();
+    }
+    
 }
 
 void DrawArray() // This draws three-dot segments and then two-dot segments.
@@ -88,12 +105,21 @@ void DrawArray() // This draws three-dot segments and then two-dot segments.
     }
   }
   
-  for (int i = 3; i < 8; i++) // Upper rows are two-dot segments
+  for (int i = 3; i < 6; i++) // Upper rows are two-dot segments
   {
     if (rows[i] > 0) // if there is something in the row
     {
       DrawPx(rows[i],i,1); // Reference dot
       DrawPx(rows[i]+1,i,1); // Dot to right
+    }
+  }
+  
+  for (int i = 6; i < 9; i++) // Upper rows are one-dot segments
+  {
+    if (rows[i] > 0) // if there is something in the row
+    {
+      DrawPx(rows[i],i,1); // Reference dot
+      
     }
   }
 }
@@ -110,31 +136,42 @@ void UpdateArray()
         rows[i] = 5;
       }
       else // Here's where we need to adjust for the two- and three-dot segments
-      if (i < 3) // if the index is less than three it's one of the three-dot segments
+      {
+      if (i < 8) 
       {
         if (rows[i] < 2 && movingRight[i] == false) // if the VALUE at that index is less than 2 then it's at the edge
         {
           movingRight[i] = !movingRight[i]; // flips the direction
           rows[i] = 2;
         }
-      else
+      
+      else 
       {
-        if (rows[i] < 2 && movingRight[i] == false) // if the VALUE at that index is less than 2 then it's at the edge
+        Serial.println("Two-dot if-else reached."); // help us de-bug the game
+        if (rows[i] < 1 && movingRight[i] == false) // if the VALUE at that index is less than 1 then it's at the edge
         {
+          Serial.println("At edge");
           movingRight[i] = !movingRight[i]; // flips the direction
-          rows[i] = 2;
+          rows[i] = 1;
         }
       }
       if (movingRight[i] == true)
+      {
+        Serial.println("Added one to i");
         rows[i]++;
+      }
       else
+      {
+        Serial.println("Took one away from i");
         rows[i]--;
       }
+      }
+      }
+    }
     }
   }
-  
- 
-}
+
+
 
 void InitRows() // This basically fills the movingRight array with trues and falses
 {               // We'll say false stands for moving left and true stands for moving right.
@@ -156,5 +193,64 @@ void PrintArray()
     Serial.println(rows[i]);
     Serial.println();
   }
+ 
 }
+
+void winscreen()
+  {
+          ClearSlate();
+          DrawPx(1,6,Green);
+          DrawPx(2,6,Green);
+          DrawPx(3,6,Green);
+          DrawPx(1,5,Green);
+          DrawPx(1,4,Green);
+          DrawPx(2,4,Green);
+          DrawPx(3,4,Green);  
+          DrawPx(3,5,Green);
+      
+          DrawPx(4,6,Green);
+          DrawPx(4,5,Green);
+          DrawPx(4,4,Green);
+          DrawPx(5,4,Green);
+          DrawPx(6,4,Green);
+          DrawPx(6,5,Green);
+          DrawPx(6,6,Green);
+          DrawPx(5,6,Green);
+          DrawPx(4,6,Green);
+      
+          DrawPx(1,2,Green);
+          DrawPx(1,1,Green);
+          DrawPx(2,1,Green);
+          DrawPx(3,1,Green);
+          DrawPx(4,1,Green);
+          DrawPx(5,1,Green);
+          DrawPx(6,1,Green);
+          DrawPx(6,2,Green);
+          DrawPx(5,2,Green);
+          DrawPx(4,2,Green);
+          DrawPx(3,2,Green);
+          DrawPx(2,2,Green);
+          Tone_Start(18183, 50);
+          Tone_Start(18183, 50);
+          Tone_Start(18183, 50);
+          DisplaySlate();
+          delay(2000);
+          NewGame();
+  }
+    
+    
+void NewGame()
+{
+  
+  ClearSlate();
+
+level = 0;
+win = 0;
+loose = 0;
+  
+  
+  DisplaySlate();
+ 
+}    
+    
 
